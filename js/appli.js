@@ -26,9 +26,7 @@ var graphique;
               pinch: {
                 enabled: true
               },
-              drag: {
-                enabled: true
-              },
+             
               mode: 'x',
             },
             pan: {
