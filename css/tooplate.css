@@ -82,7 +82,7 @@ a:focus {
 }
 
 .tm-mt-big {
-  margin-top: 70px;
+  margin-top: 10px;
 }
 
 .tm-mt-small {
@@ -96,7 +96,7 @@ a:focus {
 .tm-block-title {
   font-size: 1.4rem;
   color: #333;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 
 .navbar-light .navbar-nav .nav-link {
@@ -133,15 +133,15 @@ a:focus {
 .tm-col {
   padding-left: 20px;
   padding-right: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 15px;
 }
 
 .tm-col-big {
-  width: 39%;
+  width: 100%;
 }
 
 .tm-col-small {
-  width: 21.95%;
+  width: 21%;
 }
 
 .tm-link-black {
