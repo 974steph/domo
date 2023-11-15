@@ -1,184 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-	<title>Chart JS Mixed Chart </title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js">	</script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.1.2/chart.umd.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Température Casa</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+    <!-- https://fonts.google.com/specimen/Open+Sans -->
+    <link rel="stylesheet" href="css/fontawesome.min.css">
+    <!-- https://fontawesome.com/ -->
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css">
+    <!-- https://getbootstrap.com/ -->
+    <link rel="stylesheet" href="css/tooplate.css">
 </head>
-<body>
-	<div>
-		<h1 style="color:green">Temperature</h1>
-		<h3><div id="piece">Chambre 1</div></h3>
-		<div>
-			<canvas id="graph_ID"></canvas>
-		</div>
-		<div>
-			<select id="room">
-			    <option value="chambre1">chambre 1</option>
-			    <option value="chambre2">chambre 2</option>
-			    <option value="chambre3">chambre 3</option>
-			    <option value="salon">salon</option>
-			    <option value="cuisine">cuisine</option>
-			    
-			</select>
-		</div>
-		
-	</div>
-	
-	<script>
-		$('#room').on('change', function()
-		{
-		    var titre = $(this).children("option:selected").text();
-		    console.log(titre)
-		    update(this.value,titre); 
-		});
-		var dataDomo;
-		$.getJSON('data.json', function(data) {
-	        console.log('stephane');
-	        dataDomo=data;
-	    });
 
+<body id="reportsPage">
+    <div class="" id="home">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="navbar navbar-expand-xl navbar-light bg-light">
+                        <a class="navbar-brand" href="#">
+                            <i class="fas fa-3x fa-tachometer-alt tm-site-icon"></i>
+                            <h1 class="tm-site-title mb-0">Temperature</h1>
+                        </a>
+                        
+                    </nav>
+                </div>
+            </div>
+            <!-- row -->
+            <div class="row tm-content-row tm-mt-big">
+                <div class="tm-col tm-col-big">
+                    <div class="bg-white tm-block ">
+                        <h2 class="tm-block-title"><div id="piece">Chambre 1</div></h2>
+                        <canvas id="graph_ID"></canvas>
+                    </div>
+                </div>
+                
+                
 
-		var dates=['08:00', '08:10','08:15', '08:20','08:25','08:30']
+                
+             
+            </div>
+            <div class="row tm-content-row tm-mt-big">
+                <div class="tm-col">
+                    <select id="room" >
+                        <option value="chambre1">chambre 1</option>
+                        <option value="chambre2">chambre 2</option>
+                        <option value="chambre3">chambre 3</option>
+                        <option value="salon">salon</option>
+                        <option value="cuisine">cuisine</option>
+                        
+                    </select>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.1.2/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+   
 
-		var plugins= {
-		      legend: {
-		        display: false
-		      },
-		      tooltip: {
-		        usePointStyle: true,
-		      },
-		      zoom: {
-		        zoom: {
-		          wheel: {
-		            enabled: true,
-		          },
-		          pinch: {
-		            enabled: true
-		          },
-		          mode: 'x',
-		        },
-		        pan: {
-		          enabled: true,
-		          mode: 'x',
-		        },
-		        limits: {
-		          x: {
-		            minRange: 3
-		          },
-		        },
-		      }
-		    }
-
-		var options={
-					    responsive: true,
-					    scales: {
-						      	A: {
-							        type: 'linear',
-							        position: 'left',
-							        ticks: { beginAtZero: false },
-							        // Hide grid lines, otherwise you have separate grid lines for the 2 y axes
-							        grid: { display: false },
-							        max: 35,
-							        min: 0,
-							       
-							    },
-							    B: {
-							        display: false,
-							        position: 'right',
-							        max: 30,
-							        min: 0,
-							    },
-						     	x: { ticks: { beginAtZero: false } ,
-						        },
-					      
-					    },
-					    plugins: plugins
-
-
-
-
-
-
-
-  					}
-  		function getOnOFF(data)
-  		{  
-           return {
-				yAxisID: 'B',
-				label: 'on/Off',
-				data: data,
-				pointRadius: 0,
-				stepped: true,
-				type: 'line',
-				fill: true,
-				borderColor: "#FF0000",
-				backgroundColor: "#FF0000"
-			 };
-
-
-  		}
-
-
-		
-  		function getTemp(data)
-  		{  
-           return {
-					yAxisID: 'A',
-					label: 'temp',
-					data: data,
-					type: 'line',
-					lineTension: 0.1,
-					borderColor: "#0000FF",
-					backgroundColor: "#0000FF"
-					
-				};
-
-
-  		}
-
-		
-		
-		var dataTemp=[];
-		var dataOnOff=[]
-		var mychart = document.getElementById("graph_ID").getContext("2d");
-		graphique= new Chart(mychart, {
-				type: 'line',			
-				data: {
-					datasets: [getOnOFF(dataOnOff), getTemp(dataTemp)],
-					labels: dates
-				},
-				options: options
-				//end data			
-			});
-		
-
-		function update(room,libelle)
-		{  $('#piece').html(libelle);
-		   dataTemp=dataDomo[room]["temp"];
-		   dataOnOff=dataDomo[room]["state"]
-		   dates=dataDomo[room]["date"]
-		   var newDataObject =  {
-								 	datasets: [getOnOFF(dataOnOff), getTemp(dataTemp)],
-									labels: dates
-								}
-		   
-		   graphique.data=newDataObject
-		   graphique.update()
-
-		}
-
-		$( document ).ready(function() {
-	   		//update("salon","salon");
-	   		$("#room").val("salon").change();
-		});
-		
-
-	    
-		
-		
-	</script>
+    <script type="text/javascript" src="js/appli.js"></script>
+    
+    
 </body>
 </html>
-
