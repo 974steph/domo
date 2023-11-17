@@ -134,8 +134,7 @@ var graphique;
 
     $( document ).ready(function() {
         
-            
-      
+
 
 
       var dates=['08:00', '08:10','08:15', '08:20','08:25','08:30']
@@ -155,14 +154,24 @@ var graphique;
 
       dataDomo = (function () {
           var json = null;
+          var formattedDate = new Date();
+          var d = formattedDate.getDate();
+          var m =  formattedDate.getMonth();
+          m += 1;  // JavaScript months are 0-11
+          var y = formattedDate.getFullYear();      
+          var fichier="data/data_" + y + m + d +".json"
+          console.log(fichier)
           $.ajax({
               'async': true,
               'global': false,
-              'url': "data/data.json",
+              'url': fichier,
               'dataType': "json",
               'success': function (data) {
                   json = data;
                   dataDomo=data;
+                  
+                
+                  $("#date_stat").text(dataDomo.date + " "+dataDomo.heure)
                   $("#room").val("salon").change();
               }
           });
