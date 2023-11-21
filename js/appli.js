@@ -52,6 +52,18 @@ var graphique;
                       grid: { display: false },
                       max: 35,
                       min: 0,
+                      grid: {
+                            display: true,
+                            color: function(context) {
+                                if (context.tick.value == 15) {
+                                  return "#ff0000";
+                                } else  {
+                                 return false;
+                                }
+
+                               
+                              },
+                          },
                      
                   },
                   B: {
@@ -62,6 +74,8 @@ var graphique;
                   },
                   x: { ticks: { beginAtZero: false } ,
                     },
+
+                 
                 
               },
               plugins: plugins
