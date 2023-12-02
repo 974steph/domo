@@ -169,9 +169,10 @@ var graphique;
       dataDomo = (function () {
           var json = null;
           var formattedDate = new Date();
-          var d = formattedDate.getDate();
-          var m =  formattedDate.getMonth();
-          m += 1;  // JavaScript months are 0-11
+          //var d = formattedDate.getDate();
+          var d =("0" + formattedDate.getDate()).slice(-2);
+          //var m =  formattedDate.getMonth();
+          var m = ("0" + (formattedDate.getMonth() + 1)).slice(-2)
           var y = formattedDate.getFullYear();      
           var fichier="data/data_" + y + m + d +".json"
           console.log(fichier)
