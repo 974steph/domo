@@ -87,6 +87,7 @@ var graphique;
 
 
             }
+      
       function getOnOFF(data)
       {  
            return {
@@ -104,13 +105,32 @@ var graphique;
 
       }
 
+      function getConsigne(data)
+      {  
+           return {
+        yAxisID: 'A',
+        label: 'Consigne',
+        data: data,
+        pointRadius: 0,
+        stepped: false,
+        type: 'line',
+        fill: false,
+        borderColor: "#696969",
+        pointBorderWidth: 0,
+        borderWidth: 0.5,
+        backgroundColor: "#696969"
+       };
+
+
+      }
+
 
     
       function getTemp(data)
       {  
            return {
           yAxisID: 'A',
-          label: 'temp',
+          label: 'Temp',
           data: data,
           type: 'line',
           lineTension: 0.1,
@@ -131,10 +151,12 @@ var graphique;
     {  $('#piece').html(libelle);
        
        dataTemp=dataDomo[room]["temp"];
-       dataOnOff=dataDomo[room]["state"]
+       dataOnOff=dataDomo[room]["state"];
+       dataConsigne=dataDomo[room]["consigne"];
        dates=dataDomo[room]["date"]
+       
        var newDataObject =  {
-                  datasets: [getOnOFF(dataOnOff), getTemp(dataTemp)],
+                  datasets: [getOnOFF(dataOnOff), getTemp(dataTemp), getConsigne(dataConsigne)],
                   labels: dates
                 }
        
@@ -144,12 +166,18 @@ var graphique;
     }
 
 
-
+    $.urlParam = function(name){
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results==null) {
+           return null;
+        }
+        return decodeURI(results[1]) || 0;
+    }
 
     $( document ).ready(function() {
         
 
-
+      
 
       var dates=['08:00', '08:10','08:15', '08:20','08:25','08:30']
             
@@ -157,7 +185,7 @@ var graphique;
       graphique= new Chart(mychart, {
         type: 'line',     
         data: {
-          datasets: [getOnOFF([]), getTemp([])],
+          datasets: [getOnOFF([]), getTemp([]),getConsigne([])],
           labels: dates
         },
         options: options
@@ -175,6 +203,18 @@ var graphique;
           var m = ("0" + (formattedDate.getMonth() + 1)).slice(-2)
           var y = formattedDate.getFullYear();      
           var fichier="data/data_" + y + m + d +".json"
+          
+          var p_date=$.urlParam('date')
+          if( p_date != null)
+          {
+            
+            if(p_date.length==8)
+            { fichier="data/data_" +p_date+".json"
+            }
+          }
+          
+
+
           console.log(fichier)
           $.ajax({
               'async': true,
