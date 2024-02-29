@@ -50,12 +50,12 @@ var graphique;
                       ticks: { beginAtZero: false },
                       // Hide grid lines, otherwise you have separate grid lines for the 2 y axes
                       grid: { display: false },
-                      max: 35,
+                      max: 100,
                       min: 0,
                       grid: {
                             display: true,
                             color: function(context) {
-                                if (context.tick.value == 15) {
+                                if (context.tick.value == 50  || context.tick.value == 60) {
                                   return "#ff0000";
                                 } else  {
                                  return false;
