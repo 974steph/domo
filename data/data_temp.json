@@ -1,0 +1,13 @@
+{ "date": "03/01/2024", 
+  "heure": "23:55",
+  "listOfDevices": ["chambre1", "chambre2", "chambre3", "salon", "cuisine", "bureau"], 
+  "tempo" : "bleu",
+  "chambre1": { "temp" : 17.1, "consigne" : 19, "etat" : 1 },
+  "chambre2": { "temp" : 17.2, "consigne" : 12 , "etat" : 0 },
+  "chambre3": { "temp" : 26, "consigne" : 13 , "etat" : 0 },
+  "salon": { "temp" : 17.4, "consigne" : 14 , "etat" : 0 },
+  "cuisine": { "temp" : 17.5, "consigne" : 15 , "etat" : 0 },
+  "bureau": { "temp" : 17.6, "consigne" : 16 , "etat" : 0 },
+  "temp_max" :25
+
+}

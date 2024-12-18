@@ -1,0 +1,138 @@
+/* ===== Select Box ===== */
+.sel {
+  font-size: 1em;
+  display: inline-block;
+  /* haut | droit | bas | gauche */
+  margin: 1em 0 1em 0;
+  width: 15em;
+  background-color: transparent;
+  position: relative;
+  cursor: pointer;
+  border-bottom: 4px solid rgba(0, 0, 0, 0.3);
+}
+
+.sel::before {
+  position: absolute;
+  content: '\f063';
+  font-family: 'FontAwesome';
+  font-size: 1em;
+  color: #FFF;
+  right: 1px;
+  top: calc(50% - 0.5em);
+}
+
+.sel.active::before {
+  transform: rotateX(-180deg);
+}
+
+
+.sel__placeholder {
+  display: block;
+  font-family: 'Quicksand';
+  font-size: 1.5em;
+  color: #838e95;
+  
+  pointer-events: none;
+  user-select: none;
+  visibility: visible;
+}
+
+.sel.active .sel__placeholder {
+  visibility: hidden;
+}
+
+.sel__placeholder::before {
+  position: absolute;
+  content: attr(data-placeholder);
+  visibility: hidden;
+}
+
+.sel.active .sel__placeholder::before {
+  visibility: hidden;
+}
+
+.sel__box {
+  position: absolute;
+  top: calc(80% + 1px);
+  //left: -4px;
+  display: none;
+  list-style-type: none;
+  text-align: left;
+  font-size: 1em;
+  background-color: #FFF;
+  width: calc(100% + 0px);
+  box-sizing: border-box;
+}
+
+.sel.active .sel__box {
+  display: block;
+  animation: fadeInUp 500ms;
+}
+
+.sel__box__options {
+  display: list-item;
+  font-family: 'Quicksand';
+  font-size: 0.8em;
+  color: #838e95;
+  padding: 0.3em 0.5em;
+  user-select: none;
+}
+
+
+
+
+.sel__box__options::after {
+  content: '\f00c';
+  font-family: 'FontAwesome';
+  font-size: 0.5em;
+  margin-left: 5px;
+  display: none;
+}
+
+.sel__box__options.selected::after {
+  display: inline;
+}
+
+.sel__box__options:hover {
+  background-color: #ebedef;
+}
+
+.sel--room {
+  z-index: 2;
+  text-align: left;
+}
+
+/* ===== Keyframes ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+
+
+.ssa {
+  
+  font-family: 'Quicksand';
+  font-size: 0.8em;
+  color: #838e95;
+  
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+  user-select: none;
+}
