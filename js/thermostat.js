@@ -32,11 +32,11 @@
 
          $('#tempo_state').removeClass();
          $('#tempo_state').addClass("t__circle_icon");
-         if (myDomoData.tempo=="blanc")
+         if (myDomoData.tempo=="WHITE")
             $('#tempo_state').addClass("t__circle_icon_white");
-         if (myDomoData.tempo=="rouge")
+         if (myDomoData.tempo=="RED")
             $('#tempo_state').addClass("t__circle_icon_red");
-         if (myDomoData.tempo=="bleu")
+         if (myDomoData.tempo=="BLUE")
             $('#tempo_state').addClass("t__circle_icon_blue");
 
       //clim
