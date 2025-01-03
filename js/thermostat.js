@@ -81,8 +81,8 @@
       if ($targetContainer.children().length > 0) {
         console.warn(`Container with id "${containerId}" already has child elements. Operation aborted.`);
         const dataRoom = $('#selected_room').attr('data-room'); // Using .attr()
-    
         console.log('Selected room:', dataRoom);
+        updateRoom(dataRoom);
         return;
       };
 
