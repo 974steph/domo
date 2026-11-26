@@ -17,9 +17,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry_1.outputs.page_url || steps.deployment_retry_2.outputs.page_url || steps.deployment_retry_3.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,14 +33,35 @@ jobs:
         with:
           path: '.'
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
+      # deploy-pages cherche l'artefact une seule fois et peut le manquer juste après l'envoi
+      # (actions/deploy-pages#451) : on relance le déploiement seulement, jamais l'envoi.
       - name: Deploy to GitHub Pages
         id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Wait before retry 1
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 5
+      - name: Deploy to GitHub Pages (retry 1)
+        id: deployment_retry_1
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Wait before retry 2
+        if: steps.deployment_retry_1.outcome == 'failure'
+        run: sleep 20
+      - name: Deploy to GitHub Pages (retry 2)
+        id: deployment_retry_2
+        if: steps.deployment_retry_1.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Wait before retry 3
+        if: steps.deployment_retry_2.outcome == 'failure'
+        run: sleep 60
+      - name: Deploy to GitHub Pages (retry 3)
+        id: deployment_retry_3
+        if: steps.deployment_retry_2.outcome == 'failure'
         uses: actions/deploy-pages@v4
