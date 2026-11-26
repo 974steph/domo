@@ -1,186 +1,94 @@
-  var myDomoData= null;
+"use strict";
 
-  var updateRoom =
-    function(room) {
-      console.log(room);
-      console.log(myDomoData[room]);
-      $('#date_stat').text(myDomoData.date +" " + myDomoData.heure);
-      
+// Page thermostat : dernier état connu de chaque pièce, lu dans data/data_temp.json.
+(function () {
+  const REFRESH_MS = 60 * 1000;
+  const el = {
+    pieces: document.getElementById("pieces"),
+    cadran: document.getElementById("cadran"),
+    entier: document.getElementById("entier"),
+    decimale: document.getElementById("decimale"),
+    consigne: document.getElementById("consigne"),
+    marche: document.getElementById("marche"),
+    maj: document.getElementById("maj"),
+  };
+  const etat = { donnees: null, piece: lirePiece() };
 
-      var text = String(myDomoData[room].temp);
-      var parts = text.split('.');
-      $('#temp_digit').text(parts[0]);
-      $('#temp_decimal').text(parts[1]);
-      $('#consigne').text(myDomoData[room].consigne);
+  function lirePiece() {
+    const url = new URLSearchParams(location.search).get("piece");
+    if (url) return url;
+    try { return localStorage.getItem("piece"); } catch (erreur) { return null; }
+  }
 
-      //halo
-        el = document.querySelector(".t");
-        el?.style.setProperty("--temp-hue", 100);
-        if (myDomoData[room].temp < myDomoData[room].consigne)
-        {
-          el?.style.setProperty("--temp-hue", 200);
-        }
-        if (myDomoData[room].temp >myDomoData.temp_max)
-        {
-          el?.style.setProperty("--temp-hue", 1);
-        }
-        
+  function memoriser(piece) {
+    try { localStorage.setItem("piece", piece); } catch (erreur) { /* sans mémoire locale */ }
+  }
 
+  async function charger() {
+    try {
+      const reponse = await fetch("data/data_temp.json", { cache: "no-cache" });
+      etat.donnees = reponse.ok ? await reponse.json() : null;
+    } catch (erreur) {
+      etat.donnees = null;
+    }
+    dessiner();
+  }
 
+  function dessiner() {
+    const donnees = etat.donnees;
+    const pieces = donnees && Array.isArray(donnees.listOfDevices) ? donnees.listOfDevices : [];
+    if (!pieces.includes(etat.piece)) etat.piece = pieces[0] || null;
 
-      // tempo
+    el.pieces.replaceChildren(
+      ...pieces.map((nom) => {
+        const bouton = document.createElement("button");
+        bouton.type = "button";
+        bouton.textContent = nom;
+        bouton.setAttribute("aria-pressed", String(nom === etat.piece));
+        bouton.addEventListener("click", () => { etat.piece = nom; memoriser(nom); dessiner(); });
+        return bouton;
+      })
+    );
+    Pieces.centrer();
 
-         $('#tempo_state').removeClass();
-         $('#tempo_state').addClass("t__circle_icon");
-         if (myDomoData.tempo=="WHITE")
-            $('#tempo_state').addClass("t__circle_icon_white");
-         if (myDomoData.tempo=="RED")
-            $('#tempo_state').addClass("t__circle_icon_red");
-         if (myDomoData.tempo=="BLUE")
-            $('#tempo_state').addClass("t__circle_icon_blue");
+    const piece = donnees && donnees[etat.piece];
+    if (!piece) {
+      el.entier.textContent = "–";
+      el.decimale.textContent = "";
+      el.consigne.textContent = "";
+      el.marche.className = "etat-clim";
+      el.cadran.style.setProperty("--teinte", "220");
+      el.maj.textContent = "Pas de données.";
+      return;
+    }
 
-      //clim
-          $('#clim_state').removeClass();
-          $('#clim_state').addClass("t__fire_icon");
-          if (myDomoData[room].etat==1)
-            $('#clim_state').addClass("t__fire_icon--enabled");
-          else
-            $('#clim_state').addClass("t__fire_icon--disabled");
+    const temperature = piece.temp;
+    const [entier, decimale] = temperature == null ? ["–", null] : temperature.toFixed(1).split(".");
+    el.entier.textContent = entier;
+    el.decimale.textContent = decimale == null ? "" : "," + decimale;
+    el.cadran.classList.toggle("ancienne", piece.mesure_perimee === true);
+    el.cadran.style.setProperty("--teinte", String(teinte(piece, donnees.temp_max)));
+    el.consigne.textContent = piece.consigne == null ? "pas de consigne" : `consigne ${piece.consigne} °C`;
+    el.marche.className = "etat-clim" + (piece.etat === 1 ? " marche" : "");
+    el.marche.title = piece.etat === 1 ? "Climatisation en marche" : "Climatisation à l'arrêt";
 
-    };
-        
-  var loadData = 
-      function () {
-          var fichier="data/data_temp.json"
-          $.ajax({
-              'async': true,
-              'global': false,
-              'url': fichier,
-              'dataType': "json",
-              'success': function (data) {
-                  console.log(data);
-                  myDomoData=data;
-                   createCustomDropdown("select-room",data.listOfDevices);
-                  
-              }
-          });
-      }; 
+    el.maj.replaceChildren(`Mis à jour le ${donnees.date} à ${donnees.heure}`);
+    if (piece.mesure_perimee === true) {
+      const alerte = document.createElement("div");
+      alerte.className = "alerte";
+      alerte.textContent = "Mesure ancienne : le capteur ne répond plus.";
+      el.maj.append(alerte);
+    }
+  }
 
+  // Bleu sous la consigne, rouge au-dessus du maximum, vert entre les deux.
+  function teinte(piece, maximum) {
+    if (piece.temp == null) return 220;
+    if (maximum != null && piece.temp > maximum) return 5;
+    if (piece.consigne != null && piece.temp < piece.consigne) return 210;
+    return 120;
+  }
 
-  var  createCustomDropdown = 
-    function(containerId, optionsArray){
-      
-      // Ensure the target container exists
-      const $targetContainer = $('#' + containerId);
-      if ($targetContainer.length === 0) {
-        console.error(`Container with id "${containerId}" not found.`);
-        return;
-      };
-
-      // Check if the target container already has children
-      if ($targetContainer.children().length > 0) {
-        
-        const dataRoom = $('#selected_room').attr('data-room'); // Using .attr()
-        console.log('Selected room:', dataRoom);
-        updateRoom(dataRoom);
-        return;
-      };
-
-
-  
-      const $container = $('<div>', { class: '' });
-  
-      // Create the placeholder from the first option in the array
-      const placeholder = optionsArray[0]; // Assuming the first option is a placeholder
-      $container.append($('<span>', {
-        class: 'sel__placeholder',
-        id: "selected_room",
-        text: placeholder,
-        
-        'data-room' :placeholder
-        
-      }));
-    
-      // Create the dropdown box container
-      const $box = $('<div>', { class: 'sel__box' });
-      $container.append($box);
-      
-      // Add the options to the dropdown box
-      optionsArray.forEach((option, i) => {
-        if (i === 0){
-            $box.append($('<span>', {
-            class: 'sel__box__options selected',
-            text: option,
-            id: option
-          }));
-          updateRoom(option);
-        } 
-        else
-        {  
-          $box.append($('<span>', {
-            class: 'sel__box__options',
-            text: option,
-            id: option
-          }));
-        }
-      });
-      
-      // Append the created dropdown to the specified container
-      $targetContainer.append($container);
-    };
-  
-
-
-
-
-
-
-
-$( document ).ready(function() {
-
-
-   
-    
-    loadData()
-
-
-    var remainTime = 120 - parseInt((new Date().getTime() / 1000) % 60);
-    setTimeout(function()
-    {
-        loadData();
-
-        setInterval(loadData, 60000);
-    }, remainTime*1000);
-
-
-
-});
-
-
-
-
-
-
-
-$('.sel').click(function() {
-  $(this).toggleClass('active');
-});
-
-
-$('#select-room').on('click', '.sel__box__options', function() {
-  var txt = $(this).text();
-  
-  $(this).siblings('.sel__box__options').removeClass('selected');
-  $(this).addClass('selected');
-  $('#selected_room').text(txt);
-  $('#selected_room').attr('data-room', txt);
-  updateRoom(txt);
-  
-});
-
-
-
-
-
-
-
+  setInterval(() => { if (!document.hidden) charger(); }, REFRESH_MS);
+  charger();
+})();

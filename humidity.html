@@ -1,75 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Humidité Casa</title>
-    
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
-    <!-- https://fonts.google.com/specimen/Open+Sans -->
-    <link rel="stylesheet" href="css/fontawesome.min.css">
-    <!-- https://fontawesome.com/ -->
-    
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css">
-    <!-- https://getbootstrap.com/ -->
-    <link rel="stylesheet" href="css/tooplate.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Humidité Casa</title>
+  <link rel="stylesheet" href="css/historique.css">
 </head>
-
-<body id="reportsPage">
-    <div class="" id="home">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <nav class="navbar navbar-expand-xl navbar-light bg-light">
-                        <a class="navbar-brand" href="#">
-                            <i class="fas fa-3x fa-tachometer-alt tm-site-icon"></i>
-                            <h1 class="tm-site-title mb-0"><div id="piece">Chambre 1</div></h1>
-                        </a>
-                        
-                    </nav>
-                </div>
-            </div>
-            <!-- row -->
-            <div class="row tm-content-row tm-mt-big">
-                <div class="tm-col tm-col-big">
-                    <div class="bg-white tm-block ">
-                        <canvas id="graph_ID"></canvas>
-                    </div>
-                </div>
-                
-                
-
-                
-             
-            </div>
-            <div class="row tm-content-row tm-mt-big">
-                <div class="tm-col">
-                    <select id="room" >
-                        <option value="chambre1">chambre 1</option>
-                        <option value="chambre2">chambre 2</option>
-                        <option value="chambre3">chambre 3</option>
-                        <option value="salon">salon</option>
-                        <option value="cuisine">cuisine</option>
-                        
-                    </select>
-                    <h3 class="tm-site-title mb-1"><div id="date_stat"></div></h3>
-                </div>
-            </div>
-            
+<body data-metric="humidity">
+  <main>
+    <nav class="pages" aria-label="Pages">
+      <a href="index.html">Température</a>
+      <a href="humidity.html" aria-current="page">Humidité</a>
+      <a href="thermostat.html">Thermostat</a>
+    </nav>
+    <section class="carte">
+      <div class="entete">
+        <div class="selecteur">
+        <button type="button" class="fleche" id="pieces-gauche" aria-label="Pièces précédentes">‹</button>
+        <div class="pieces" id="pieces" role="group" aria-label="Pièce"></div>
+        <button type="button" class="fleche" id="pieces-droite" aria-label="Pièces suivantes">›</button>
+      </div>
+        <div class="jour">
+          <button type="button" id="precedent" aria-label="Jour précédent">‹</button>
+          <input type="date" id="jour" aria-label="Jour">
+          <button type="button" id="suivant" aria-label="Jour suivant">›</button>
         </div>
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"> </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"> </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.1.2/chart.umd.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-   
-
-    <script type="text/javascript" src="js/appli_hist.js"></script>
-    
-    
+      </div>
+      <div class="valeur" id="valeur" aria-live="polite"></div>
+      <div id="graphique"></div>
+      <dl class="stats" id="stats"></dl>
+      <div class="legende" id="legende"></div>
+    </section>
+  </main>
+  <script src="js/pieces.js"></script>
+  <script src="js/historique.js"></script>
 </body>
 </html>
